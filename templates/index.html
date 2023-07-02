@@ -1,0 +1,146 @@
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>DES</title>
+    <link rel="icon" href={{ url_for('static', filename='key.svg') }} type="image/gif" sizes="16x16">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href= {{ url_for('static', filename='css/style.css') }}>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main">
+
+        <div class="container a-container" id="a-container">
+            <form class="form" id="a-form" method="POST" action="">
+
+                <h2 class="form_title title">DES Encrypt</h2>
+
+                <div class="form__icons">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="#24242c" class="bi bi-key" viewBox="0 0 16 16">
+                        <path d="M0 8a4 4 0 0 1 7.465-2H14a.5.5 0 0 1 .354.146l1.5 1.5a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0L13 9.207l-.646.647a.5.5 0 0 1-.708 0L11 9.207l-.646.647a.5.5 0 0 1-.708 0L9 9.207l-.646.647A.5.5 0 0 1 8 10h-.535A4 4 0 0 1 0 8zm4-3a3 3 0 1 0 2.712 4.285A.5.5 0 0 1 7.163 9h.63l.853-.854a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.646-.647a.5.5 0 0 1 .708 0l.646.647.793-.793-1-1h-6.63a.5.5 0 0 1-.451-.285A3 3 0 0 0 4 5z"/>
+                        <path d="M4 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0z"/>
+                    </svg>
+                </div>
+
+                <span class="form__span">Use this box to fill Encryption field</span>
+
+                <input class="form__input" type="text" name="Key" placeholder="Key" value="" minlength="8" maxlength="8" required>
+                <input class="form__input" type="text" name="Text" placeholder="Plain Text" value="" required>
+                <input type="hidden" name="action" value="enc">
+                
+                <button type="submit" class="form__button button submit">Bake It!</button>
+                
+                {% if result_enc %}
+                    <h1 class="form_title result">Encryption Code : {{result_enc}}</h1>
+                {% endif %}
+            </form>
+
+        </div>
+
+        <div class="container b-container" id="b-container">
+
+            <form class="form" id="b-form" method="POST" action="">
+
+                <h2 class="form_title title">DES Decrypt</h2>
+
+                <div class="form__icons">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="50" fill="#24242c" class="bi bi-unlock" viewBox="0 0 16 16">
+                        <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2zM3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3z"/>
+                    </svg>
+                </div>
+
+                <span class="form__span">Use this box to fill Decryption field</span>
+
+                <input class="form__input" name="Key" type="text" placeholder="Key" minlength="8" maxlength="8" required>
+                <input class="form__input" name="Text" type="text" placeholder="Cipher Text" required>
+                <input type="hidden" name="action" value="dec">
+                <a class="form__link" href="">Previous Cipher</a>
+                <button class="form__button button submit">Crack It!</button>
+
+            </form>
+  
+        </div>
+
+        <div class="switch" id="switch-cnt">
+
+            <div class="switch__circle"></div>
+            <div class="switch__circle switch__circle--t"></div>
+
+            <div class="switch__container" id="switch-c1">
+
+                <h2 class="switch__title title">Welcome Peps!</h2>
+
+                <p class="switch__description description">here is the page for Encryption</p>
+                <button class="switch__button button switch-btn">ENCRYPT</button>
+
+            </div>
+
+            <div class="switch__container is-hidden" id="switch-c2">
+                <h2 class="switch__title title">Welcome Peps!</h2>
+                <p class="switch__description description">And here is the page for Decryption</p>
+                <button class="switch__button button switch-btn">DECRYPT</button>
+            </div>
+
+        </div>
+
+    </div>
+    <script src={{ url_for('static', filename='js/main.js') }}></script>
+
+
+
+</body>
+</html>
+
+<script>
+    bform = document.getElementById('b-form');
+    if ("{{result_dec}}" !== "") {
+
+        window.onload = () => {
+            document.getElementsByClassName("switch__button button switch-btn")[0].click();
+        };    
+
+        prevCipherBox = document.createElement("h1");
+
+        prevCipherBox.className = "form_title result";
+
+        prevCipherBox.append("Decryption Text : {{result_dec}}");
+
+        bform.append(prevCipherBox);
+    }
+
+    let clickPrevCipher = document.getElementsByClassName("form__link")[0];
+    // clickPrevCipher.addEventListener("click", onClickPrevCipher());
+    clickPrevCipher.addEventListener("click", () => {
+        prevCipherBox = document.createElement("h1");
+        prevCipherBox.className = "form_title result";
+
+        if ("{{result_enc}}" === "" && bform.children[7].tagName === 'BUTTON') {
+            prevCipherBox.append("Cipher not found make sure you have baked It!");
+
+            bform.insertBefore( prevCipherBox,bform.children[7]);
+            event.preventDefault();
+            return;
+            // return
+        }
+
+        if (bform.children[7].tagName === 'BUTTON') {
+            prevCipherBox = document.createElement("h1");
+
+            prevCipherBox.className = "form_title result";
+
+            prevCipherBox.append("{{result_enc}}");
+
+            bform.insertBefore( prevCipherBox,bform.children[7]);
+            event.preventDefault();
+            return;
+            // return
+        }
+        bform.children[7].remove();
+        event.preventDefault();
+    })
+</script>
+{% endblock %}
